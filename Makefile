@@ -10,7 +10,7 @@ TOOLCHAIN = $(TOP)/xtensa-lx106-elf
 
 # Vendor SDK version to install, see VENDOR_SDK_ZIP_* vars below
 # for supported versions.
-VENDOR_SDK = 1.4.0
+VENDOR_SDK = 1.5.1
 
 .PHONY: crosstool-NG toolchain libhal libcirom sdk
 
@@ -22,6 +22,7 @@ UNZIP = unzip -q -o
 VENDOR_SDK_ZIP = $(VENDOR_SDK_ZIP_$(VENDOR_SDK))
 VENDOR_SDK_DIR = $(VENDOR_SDK_DIR_$(VENDOR_SDK))
 
+VENDOR_SDK_ZIP_1.5.1 = ESP8266_NONOS_SDK_V1.5.1_16_01_08.zip
 VENDOR_SDK_ZIP_1.5.0 = esp_iot_sdk_v1.5.0_15_11_27.zip
 VENDOR_SDK_DIR_1.5.0 = esp_iot_sdk_v1.5.0
 VENDOR_SDK_ZIP_1.4.0 = esp_iot_sdk_v1.4.0_15_09_18.zip
@@ -159,6 +160,10 @@ $(VENDOR_SDK_DIR)/.dir: $(VENDOR_SDK_ZIP)
 
 sdk_patch: .sdk_patch_$(VENDOR_SDK)
 
+.sdk_patch_1.5.1:
+	$(PATCH) -d $(VENDOR_SDK_DIR_1.5.1) -p1 < c_types-c99.patch
+	@touch $@
+
 .sdk_patch_1.5.0:
 	$(PATCH) -d $(VENDOR_SDK_DIR_1.5.0) -p1 < c_types-c99.patch
 	@touch $@
@@ -243,7 +248,6 @@ sdk_patch: .sdk_patch_$(VENDOR_SDK)
 	$(UNZIP) $<
 	@touch $@
 
-.sdk_patch_0.9.2: FRM_ERR_PATCH.rar esp_iot_sdk_v0.9.2/.dir 
 	unrar x -o+ $<
 	cp FRM_ERR_PATCH/*.a $(VENDOR_SDK_DIR)/lib/
 	@touch $@
@@ -251,6 +255,8 @@ sdk_patch: .sdk_patch_$(VENDOR_SDK)
 empty_user_rf_pre_init.o: empty_user_rf_pre_init.c $(TOOLCHAIN)/bin/xtensa-lx106-elf-gcc
 	$(TOOLCHAIN)/bin/xtensa-lx106-elf-gcc -O2 -c $<
 
+ESP8266_NONOS_SDK_V1.5.1_16_01_08.zip:
+	wget --content-disposition "http://bbs.espressif.com/download/file.php?id=1046"
 esp_iot_sdk_v1.5.0_15_11_27.zip:
 	wget --content-disposition "http://bbs.espressif.com/download/file.php?id=989"
 esp_iot_sdk_v1.4.0_15_09_18.zip:
@@ -315,11 +321,3 @@ clean-sdk:
 	rm -rf $(VENDOR_SDK_DIR)
 	rm -f sdk
 	rm -f .sdk_patch_$(VENDOR_SDK)
-
-
-
-
-
-
-
-
