@@ -23,6 +23,7 @@ VENDOR_SDK_ZIP = $(VENDOR_SDK_ZIP_$(VENDOR_SDK))
 VENDOR_SDK_DIR = $(VENDOR_SDK_DIR_$(VENDOR_SDK))
 
 VENDOR_SDK_ZIP_1.5.1 = ESP8266_NONOS_SDK_V1.5.1_16_01_08.zip
+VENDOR_SDK_DIR_1.5.1 = esp_iot_sdk_v1.5.1
 VENDOR_SDK_ZIP_1.5.0 = esp_iot_sdk_v1.5.0_15_11_27.zip
 VENDOR_SDK_DIR_1.5.0 = esp_iot_sdk_v1.5.0
 VENDOR_SDK_ZIP_1.4.0 = esp_iot_sdk_v1.4.0_15_09_18.zip
@@ -155,8 +156,9 @@ sdk: $(VENDOR_SDK_DIR)/.dir
 
 $(VENDOR_SDK_DIR)/.dir: $(VENDOR_SDK_ZIP)
 	$(UNZIP) $^
-	-mv License $(VENDOR_SDK_DIR)
 	touch $@
+
+	#	-mv License $(VENDOR_SDK_DIR)
 
 sdk_patch: .sdk_patch_$(VENDOR_SDK)
 
